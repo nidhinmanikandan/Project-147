@@ -1,6 +1,13 @@
 import { useCallback, useState } from "react";
 import { useFocusEffect, useRouter } from "expo-router";
-import { FlatList, ScrollView, StyleSheet, Text, View } from "react-native";
+import {
+  FlatList,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 
 import { BodyText } from "@/components/ui/BodyText";
 import { BaseButton } from "@/components/ui/BaseButton";
@@ -177,27 +184,37 @@ export default function HomeScreen() {
                 const nextReview = getNextReview(item);
 
                 return (
-                  <View style={styles.reviewCard}>
-                    <MutedText style={styles.category}>
-                      {item.category}
-                    </MutedText>
-                    <BodyText style={styles.topic}>{item.topic}</BodyText>
-                    <MutedText style={styles.learned}>
-                      Learned {formatLearnedAt(item.learnedAt)}
-                    </MutedText>
-                    {nextReview ? (
-                      <BaseButton
-                        title="REVIEW NOW"
-                        onPress={() =>
-                          completeReview({ item, review: nextReview })
-                        }
-                        disabled={!isReviewDue(nextReview)}
-                        variant="black"
-                      />
-                    ) : (
-                      <MutedText>Review cycle complete.</MutedText>
-                    )}
-                  </View>
+                  <Pressable
+                    accessibilityRole="button"
+                    onPress={() =>
+                      router.push({
+                        pathname: "/review/[id]",
+                        params: { id: item.id },
+                      })
+                    }
+                  >
+                    <View style={styles.reviewCard}>
+                      <MutedText style={styles.category}>
+                        {item.category}
+                      </MutedText>
+                      <BodyText style={styles.topic}>{item.topic}</BodyText>
+                      <MutedText style={styles.learned}>
+                        Learned {formatLearnedAt(item.learnedAt)}
+                      </MutedText>
+                      {nextReview ? (
+                        <BaseButton
+                          title="REVIEW NOW"
+                          onPress={() =>
+                            completeReview({ item, review: nextReview })
+                          }
+                          disabled={!isReviewDue(nextReview)}
+                          variant="black"
+                        />
+                      ) : (
+                        <MutedText>Review cycle complete.</MutedText>
+                      )}
+                    </View>
+                  </Pressable>
                 );
               }}
               style={styles.reviewCarousel}
