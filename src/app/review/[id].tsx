@@ -92,10 +92,7 @@ export default function ReviewScreen() {
 
         {item ? (
           <>
-            
-            
             <BodyText style={styles.topic}>{item.topic}</BodyText>
-            
             <BodyText style={styles.question}>
               Can you explain {item.topic} without looking at your notes?
             </BodyText>
