@@ -1,69 +1,113 @@
-import { StyleSheet, Text, View, Pressable, ScrollView } from "react-native";
+import { useState } from "react";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
+
+import { BodyText } from "@/components/ui/BodyText";
+import { BaseButton } from "@/components/ui/BaseButton";
+import { IconButton } from "@/components/ui/IconButton";
+import { MutedText } from "@/components/ui/MutedText";
+import { ScreenTitle } from "@/components/ui/ScreenTitle";
+import { SectionTitle } from "@/components/ui/SectionTitle";
+import {
+  borderWidths,
+  colors,
+  hardShadow,
+  radius,
+  Spacing,
+  typography,
+} from "@/constants/theme";
+
+const noop = () => {};
 
 export default function HomeScreen() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
   return (
     <View style={styles.container}>
       <ScrollView
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
-        {/* Greeting */}
-        <Text style={styles.greeting}>GOOD MORNING, NIDHIN 👋</Text>
+        <ScreenTitle style={styles.greeting}>GOOD MORNING, NIDHIN.</ScreenTitle>
 
-        {/* Today */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>TODAY</Text>
-
-          <View style={styles.todayRow}>
-            <View>
-              <Text style={styles.todayNumber}>2</Text>
-              <Text style={styles.todayLabel}>reviews due</Text>
+          <SectionTitle style={styles.sectionTitle}>TODAY</SectionTitle>
+          <View style={styles.statsRow}>
+            <View style={styles.statCard}>
+              <Text style={styles.statNumber}>2</Text>
+              <MutedText>reviews due</MutedText>
             </View>
-
-            <View>
-              <Text style={styles.todayNumber}>1</Text>
-              <Text style={styles.todayLabel}>upcoming</Text>
+            <View style={styles.statCard}>
+              <Text style={styles.statNumber}>1</Text>
+              <MutedText>upcoming</MutedText>
             </View>
           </View>
         </View>
 
-        {/* Next Review */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>NEXT REVIEW</Text>
-
+          <SectionTitle style={styles.sectionTitle}>NEXT REVIEW</SectionTitle>
           <View style={styles.reviewCard}>
-            <Text style={styles.category}>DBMS</Text>
-
-            <Text style={styles.topic}>Normalization</Text>
-
-            <Text style={styles.learned}>
-              Learned 4 days ago
-            </Text>
-
-            <Pressable style={styles.reviewButton}>
-              <Text style={styles.reviewButtonText}>
-                REVIEW NOW
-              </Text>
-            </Pressable>
+            <MutedText style={styles.category}>DBMS</MutedText>
+            <BodyText style={styles.topic}>Normalization</BodyText>
+            <MutedText style={styles.learned}>Learned 4 days ago</MutedText>
+            <BaseButton title="REVIEW NOW" onPress={noop} variant="black" />
           </View>
         </View>
 
-        {/* Today's Reviews */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>TODAY'S REVIEWS</Text>
-
+          <SectionTitle style={styles.sectionTitle}>
+            TODAY&apos;S REVIEWS
+          </SectionTitle>
           <View style={styles.reviewList}>
-            <Text style={styles.reviewItem}>• Normalization</Text>
-            <Text style={styles.reviewItem}>• OOP — Polymorphism</Text>
-            <Text style={styles.reviewItem}>• Arrays — Sliding Window</Text>
+            <BodyText>• Normalization</BodyText>
+            <BodyText>• OOP — Polymorphism</BodyText>
+            <BodyText>• Arrays — Sliding Window</BodyText>
           </View>
         </View>
       </ScrollView>
 
-      {/* Add Button */}
-      <Pressable style={styles.addButton}>
-        <Text style={styles.addButtonText}>+</Text>
-      </Pressable>
+      <View style={styles.floatingActions}>
+        {isMenuOpen && (
+          <View style={styles.menuOptions}>
+            <IconButton
+              accessibilityLabel="Settings"
+              icon={{ ios: "gear", android: "settings", web: "settings" }}
+              onPress={noop}
+            />
+            <IconButton
+              accessibilityLabel="Review history"
+              icon={{
+                ios: "clock.arrow.circlepath",
+                android: "history",
+                web: "history",
+              }}
+              onPress={noop}
+            />
+            <IconButton
+              accessibilityLabel="Search"
+              icon={{
+                ios: "magnifyingglass",
+                android: "search",
+                web: "search",
+              }}
+              onPress={noop}
+            />
+          </View>
+        )}
+        <IconButton
+          accessibilityLabel={isMenuOpen ? "Collapse menu" : "Expand menu"}
+          icon={{
+            ios: isMenuOpen ? "chevron.down" : "chevron.up",
+            android: isMenuOpen ? "expand_more" : "expand_less",
+            web: isMenuOpen ? "expand_more" : "expand_less",
+          }}
+          onPress={() => setIsMenuOpen((value) => !value)}
+        />
+        <IconButton
+          accessibilityLabel="Add learning"
+          icon={{ ios: "plus", android: "add", web: "add" }}
+          onPress={noop}
+        />
+      </View>
     </View>
   );
 }
@@ -71,115 +115,78 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.background,
   },
-
   content: {
-    paddingHorizontal: 24,
-    paddingTop: 70,
+    width: "100%",
+    maxWidth: 720,
+    alignSelf: "center",
+    paddingHorizontal: Spacing.lg,
+    paddingTop: Spacing.lg,
     paddingBottom: 120,
   },
-
   greeting: {
-    fontSize: 32,
-    fontWeight: "700",
-    marginBottom: 40,
-
+    marginBottom: Spacing.xxxl,
   },
-
   section: {
-    marginBottom: 32,
+    marginBottom: Spacing.xxl,
   },
-
   sectionTitle: {
-    fontSize: 13,
-    fontWeight: "700",
-    letterSpacing: 1.5,
-    color: "#777777",
-    marginBottom: 14,
-  },
-
-  todayRow: {
-    flexDirection: "row",
-    gap: 50,
-  },
-
-  todayNumber: {
-    fontSize: 28,
-    fontWeight: "700",
-  },
-
-  todayLabel: {
-    fontSize: 14,
-    color: "#777777",
-    marginTop: 2,
-  },
-
-  reviewCard: {
-    borderWidth: 1,
-    borderColor: "#E5E5E5",
-    borderRadius: 16,
-    padding: 20,
-  },
-
-  category: {
-    fontSize: 13,
-    fontWeight: "600",
-    color: "#777777",
-    marginBottom: 6,
-  },
-
-  topic: {
-    fontSize: 22,
-    fontWeight: "700",
-  },
-
-  learned: {
-    fontSize: 14,
-    color: "#777777",
-    marginTop: 8,
-    marginBottom: 20,
-  },
-
-  reviewButton: {
-    backgroundColor: "#111111",
-    paddingVertical: 14,
-    borderRadius: 10,
-    alignItems: "center",
-  },
-
-  reviewButtonText: {
-    color: "#FFFFFF",
-    fontSize: 13,
-    fontWeight: "700",
+    marginBottom: Spacing.md,
     letterSpacing: 1,
   },
-
-  reviewList: {
-    gap: 14,
+  statsRow: {
+    flexDirection: "row",
+    gap: Spacing.md,
   },
-
-  reviewItem: {
-    fontSize: 16,
-  },
-
-  addButton: {
-    position: "absolute",
-    right: 24,
-    bottom: 30,
-    width: 58,
-    height: 58,
-    borderRadius: 29,
-    backgroundColor: "#111111",
-    alignItems: "center",
+  statCard: {
+    ...hardShadow,
+    flex: 1,
+    minHeight: 96,
     justifyContent: "center",
-    elevation: 5,
+    padding: Spacing.lg,
+    borderWidth: borderWidths.default,
+    borderColor: colors.border,
+    borderRadius: radius.md,
+    backgroundColor: colors.surface,
   },
-
-  addButtonText: {
-    color: "#FFFFFF",
-    fontSize: 32,
-    fontWeight: "300",
-    marginTop: -3,
+  statNumber: {
+    color: colors.text,
+    fontSize: 28,
+    fontWeight: typography.heading.fontWeight,
+    lineHeight: 32,
+  },
+  reviewCard: {
+    ...hardShadow,
+    padding: Spacing.lg,
+    borderWidth: borderWidths.default,
+    borderColor: colors.border,
+    borderRadius: radius.lg,
+    backgroundColor: colors.surface,
+  },
+  category: {
+    marginBottom: Spacing.sm,
+  },
+  topic: {
+    fontSize: 22,
+    fontWeight: typography.heading.fontWeight,
+  },
+  learned: {
+    marginTop: Spacing.sm,
+    marginBottom: Spacing.lg,
+  },
+  reviewList: {
+    gap: Spacing.md,
+  },
+  floatingActions: {
+    position: "absolute",
+    right: Spacing.lg,
+    bottom: Spacing.lg,
+    alignItems: "flex-end",
+    gap: Spacing.sm,
+  },
+  menuOptions: {
+    flexDirection: "row",
+    gap: Spacing.sm,
   },
 });

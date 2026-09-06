@@ -107,6 +107,14 @@ export const hardShadow = {
   shadowOffset: { width: 3, height: 4 },
   shadowOpacity: 1,
   shadowRadius: 0,
+  boxShadow: [
+    {
+      offsetX: 3,
+      offsetY: 4,
+      blurRadius: 0,
+      color: colors.border,
+    },
+  ],
   elevation: 0,
 } as const;
 
