@@ -39,7 +39,7 @@ export type ThemeColor = keyof typeof Colors.light & keyof typeof Colors.dark;
 export const Fonts = Platform.select({
   ios: {
     /** iOS `UIFontDescriptorSystemDesignDefault` */
-    sans: "Poppins",
+    sans: "Poppins_400Regular",
     /** iOS `UIFontDescriptorSystemDesignSerif` */
     serif: "ui-serif",
     /** iOS `UIFontDescriptorSystemDesignRounded` */
@@ -48,13 +48,13 @@ export const Fonts = Platform.select({
     mono: "ui-monospace",
   },
   default: {
-    sans: "Poppins",
+    sans: "Poppins_400Regular",
     serif: "serif",
     rounded: "normal",
     mono: "monospace",
   },
   web: {
-    sans: "Poppins",
+    sans: "Poppins_400Regular",
     serif: "var(--font-serif)",
     rounded: "var(--font-rounded)",
     mono: "var(--font-mono)",
@@ -91,16 +91,16 @@ export const borderWidths = {
 
 export const typography = {
   heading: {
-    fontFamily: Fonts.sans,
+    fontFamily: "Poppins_800ExtraBold",
     fontWeight: "800" as const,
     lineHeight: 1.05,
   },
   body: {
-    fontFamily: Fonts.sans,
+    fontFamily: "Poppins_400Regular",
     fontWeight: "400" as const,
   },
   label: {
-    fontFamily: Fonts.sans,
+    fontFamily: "Poppins_700Bold",
     fontWeight: "700" as const,
   },
 } as const;
