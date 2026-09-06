@@ -1,21 +1,21 @@
-import { Pressable, StyleSheet, Text } from 'react-native';
+import { Pressable, StyleSheet, Text } from "react-native";
 
-import { colors, hardShadow, radius, Spacing } from '@/constants/theme';
+import { colors, hardShadow, radius, Spacing } from "@/constants/theme";
 
 type BaseButtonProps = {
   title: string;
   onPress: () => void;
   disabled?: boolean;
-  variant?: 'default' | 'yellow' | 'black';
+  variant?: "default" | "yellow" | "black";
 };
 
 export function BaseButton({
   title,
   onPress,
   disabled = false,
-  variant = 'default',
+  variant = "default",
 }: BaseButtonProps) {
-  const isBlackVariant = variant === 'black';
+  const isBlackVariant = variant === "black";
 
   return (
     <Pressable
@@ -24,12 +24,15 @@ export function BaseButton({
       onPress={onPress}
       style={({ pressed }) => [
         styles.button,
-        variant === 'yellow' && styles.yellowButton,
+        variant === "yellow" && styles.yellowButton,
         isBlackVariant && styles.blackButton,
         pressed && styles.pressedButton,
         disabled && styles.disabledButton,
-      ]}>
-      <Text style={[styles.label, isBlackVariant && styles.blackLabel]}>{title}</Text>
+      ]}
+    >
+      <Text style={[styles.label, isBlackVariant && styles.blackLabel]}>
+        {title}
+      </Text>
     </Pressable>
   );
 }
@@ -37,8 +40,8 @@ export function BaseButton({
 const styles = StyleSheet.create({
   button: {
     ...hardShadow,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     minHeight: 52,
     paddingHorizontal: Spacing.lg,
     borderWidth: 2,
@@ -61,7 +64,7 @@ const styles = StyleSheet.create({
   label: {
     color: colors.text,
     fontSize: 15,
-    fontWeight: '700',
+    fontWeight: "700",
   },
   blackLabel: {
     color: colors.surface,
