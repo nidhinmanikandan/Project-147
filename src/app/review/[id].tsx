@@ -92,9 +92,10 @@ export default function ReviewScreen() {
 
         {item ? (
           <>
-            <ScreenTitle style={styles.title}>REVIEW</ScreenTitle>
-            <MutedText style={styles.category}>{item.category}</MutedText>
+            
+            
             <BodyText style={styles.topic}>{item.topic}</BodyText>
+            
             <BodyText style={styles.question}>
               Can you explain {item.topic} without looking at your notes?
             </BodyText>
@@ -172,6 +173,7 @@ const styles = StyleSheet.create({
     maxWidth: 720,
     alignSelf: "center",
     gap: Spacing.md,
+    marginTop: Spacing.xxxl,
   },
   title: {
     marginTop: Spacing.lg,
@@ -180,12 +182,13 @@ const styles = StyleSheet.create({
     marginTop: Spacing.sm,
   },
   topic: {
+    marginTop: Spacing.lg,
     fontFamily: typography.heading.fontFamily,
-    fontSize: 24,
+    fontSize: 32,
     fontWeight: typography.heading.fontWeight,
   },
   question: {
-    marginTop: Spacing.md,
+    marginTop: 0,
   },
   actions: {
     gap: Spacing.md,
