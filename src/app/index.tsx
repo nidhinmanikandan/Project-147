@@ -7,7 +7,10 @@ import { IconButton } from "@/components/ui/IconButton";
 import { MutedText } from "@/components/ui/MutedText";
 import { ScreenTitle } from "@/components/ui/ScreenTitle";
 import { SectionTitle } from "@/components/ui/SectionTitle";
-import { getLearningItems } from "@/services/learningStorage";
+import {
+  getLearningItems,
+  updateLearningItem,
+} from "@/services/learningStorage";
 import {
   borderWidths,
   colors,
@@ -71,6 +74,13 @@ function formatLearnedAt(learnedAt: string) {
       });
 }
 
+function isReviewDue(review: LearningReview, now = new Date()) {
+  const endOfToday = new Date(now.getTime());
+  endOfToday.setHours(23, 59, 59, 999);
+
+  return new Date(review.scheduledFor).getTime() <= endOfToday.getTime();
+}
+
 export default function HomeScreen() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [learningItems, setLearningItems] = useState<LearningItem[]>([]);
@@ -90,6 +100,29 @@ export default function HomeScreen() {
   }, []);
 
   const reviewState = getReviewState(learningItems);
+
+  async function completeReview({ item, review }: ReviewWithItem) {
+    if (review.completed || !isReviewDue(review)) {
+      return;
+    }
+
+    const completedAt = new Date().toISOString();
+    const updatedItem: LearningItem = {
+      ...item,
+      reviews: item.reviews.map((itemReview) =>
+        itemReview.day === review.day
+          ? { ...itemReview, completed: true, completedAt }
+          : itemReview,
+      ),
+    };
+
+    await updateLearningItem(updatedItem);
+    setLearningItems((items) =>
+      items.map((storedItem) =>
+        storedItem.id === updatedItem.id ? updatedItem : storedItem,
+      ),
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -128,7 +161,12 @@ export default function HomeScreen() {
                   Learned{" "}
                   {formatLearnedAt(reviewState.nextReview.item.learnedAt)}
                 </MutedText>
-                <BaseButton title="REVIEW NOW" onPress={noop} variant="black" />
+                <BaseButton
+                  title="REVIEW NOW"
+                  onPress={() => completeReview(reviewState.nextReview!)}
+                  disabled={!isReviewDue(reviewState.nextReview.review)}
+                  variant="black"
+                />
               </>
             ) : (
               <MutedText>No reviews scheduled yet.</MutedText>
