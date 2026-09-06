@@ -127,7 +127,7 @@ const styles = StyleSheet.create({
   },
   greeting: {
     fontFamily: "Poppins_800ExtraBold",
-    marginTop: Spacing.xxxl,
+    marginTop: 64,
     marginBottom: Spacing.xxxl,
   },
   section: {
