@@ -116,6 +116,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,
+    
   },
   content: {
     width: "100%",
@@ -126,6 +127,7 @@ const styles = StyleSheet.create({
     paddingBottom: 120,
   },
   greeting: {
+    marginTop: Spacing.xxxl,
     marginBottom: Spacing.xxxl,
   },
   section: {
