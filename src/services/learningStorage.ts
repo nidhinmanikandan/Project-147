@@ -1,8 +1,8 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import type { LearningItem } from '../types/learning';
+import type { LearningItem } from "../types/learning";
 
-const LEARNING_ITEMS_KEY = '@recall/learning-items';
+const LEARNING_ITEMS_KEY = "@recall/learning-items";
 
 async function readLearningItems(): Promise<LearningItem[]> {
   try {
