@@ -1,4 +1,4 @@
-import type { LearningReview, ReviewDay } from "@/types/learning";
+import type { LearningReview, ReviewDay } from "../types/learning";
 
 const reviewDays: ReviewDay[] = [1, 4, 7];
 
