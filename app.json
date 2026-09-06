@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "recall-app",
+    "name": "147",
     "slug": "recall-app",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -17,7 +17,8 @@
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.nidhinnidworkz.recallapp"
     },
     "web": {
       "output": "static",
