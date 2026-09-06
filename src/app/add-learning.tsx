@@ -4,10 +4,15 @@ import { useRouter } from "expo-router";
 
 import { AddLearningForm } from "@/components/learning/AddLearningForm";
 import { BodyText } from "@/components/ui/BodyText";
+import { IconButton } from "@/components/ui/IconButton";
 import { MutedText } from "@/components/ui/MutedText";
 import { SectionTitle } from "@/components/ui/SectionTitle";
 import { borderWidths, colors, radius, Spacing } from "@/constants/theme";
-import { getLearningItems, saveLearningItem } from "@/services/learningStorage";
+import {
+  deleteLearningItem,
+  getLearningItems,
+  saveLearningItem,
+} from "@/services/learningStorage";
 import { scheduleReviews } from "@/utils/scheduleReviews";
 import type { LearningItem } from "@/types/learning";
 
@@ -57,6 +62,17 @@ export default function AddLearningScreen() {
     router.back();
   }
 
+  async function handleDelete(id: string) {
+    const deleted = await deleteLearningItem(id);
+    if (!deleted) {
+      setErrorMessage("Unable to delete this learning item. Please try again.");
+      return;
+    }
+
+    setLearningItems((items) => items.filter((item) => item.id !== id));
+    setErrorMessage("");
+  }
+
   return (
     <ScrollView
       contentContainerStyle={styles.content}
@@ -83,10 +99,17 @@ export default function AddLearningScreen() {
               )
               .map((item) => (
                 <View key={item.id} style={styles.recentItem}>
-                  <BodyText>{item.topic}</BodyText>
-                  <MutedText>
-                    {item.category} - {formatLearnedAt(item.learnedAt)}
-                  </MutedText>
+                  <View style={styles.recentDetails}>
+                    <BodyText>{item.topic}</BodyText>
+                    <MutedText>
+                      {item.category} - {formatLearnedAt(item.learnedAt)}
+                    </MutedText>
+                  </View>
+                  <IconButton
+                    accessibilityLabel={`Delete ${item.topic}`}
+                    icon={{ ios: "minus", android: "remove", web: "remove" }}
+                    onPress={() => handleDelete(item.id)}
+                  />
                 </View>
               ))
           ) : (
@@ -125,10 +148,18 @@ const styles = StyleSheet.create({
     gap: Spacing.md,
   },
   recentItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: Spacing.md,
     padding: Spacing.md,
     borderWidth: borderWidths.default,
     borderColor: colors.border,
     borderRadius: radius.md,
     backgroundColor: colors.surface,
+  },
+  recentDetails: {
+    flex: 1,
+    gap: Spacing.xs,
   },
 });
