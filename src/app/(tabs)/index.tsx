@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 import { useFocusEffect, useRouter } from "expo-router";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { FlatList, ScrollView, StyleSheet, Text, View } from "react-native";
 
 import { BodyText } from "@/components/ui/BodyText";
 import { BaseButton } from "@/components/ui/BaseButton";
@@ -82,6 +82,18 @@ function isReviewDue(review: LearningReview, now = new Date()) {
   return new Date(review.scheduledFor).getTime() <= endOfToday.getTime();
 }
 
+function getNextReview(item: LearningItem) {
+  return (
+    item.reviews
+      .filter((review) => !review.completed)
+      .sort(
+        (first, second) =>
+          new Date(first.scheduledFor).getTime() -
+          new Date(second.scheduledFor).getTime(),
+      )[0] ?? null
+  );
+}
+
 export default function HomeScreen() {
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -152,30 +164,50 @@ export default function HomeScreen() {
 
         <View style={styles.section}>
           <SectionTitle style={styles.sectionTitle}>NEXT REVIEW</SectionTitle>
-          <View style={styles.reviewCard}>
-            {reviewState.nextReview ? (
-              <>
-                <MutedText style={styles.category}>
-                  {reviewState.nextReview.item.category}
-                </MutedText>
-                <BodyText style={styles.topic}>
-                  {reviewState.nextReview.item.topic}
-                </BodyText>
-                <MutedText style={styles.learned}>
-                  Learned{" "}
-                  {formatLearnedAt(reviewState.nextReview.item.learnedAt)}
-                </MutedText>
-                <BaseButton
-                  title="REVIEW NOW"
-                  onPress={() => completeReview(reviewState.nextReview!)}
-                  disabled={!isReviewDue(reviewState.nextReview.review)}
-                  variant="black"
-                />
-              </>
-            ) : (
+          {learningItems.length > 0 ? (
+            <FlatList
+              data={learningItems}
+              horizontal
+              keyExtractor={(item) => item.id}
+              contentContainerStyle={styles.reviewCarouselContent}
+              ItemSeparatorComponent={() => (
+                <View style={styles.cardSeparator} />
+              )}
+              renderItem={({ item }) => {
+                const nextReview = getNextReview(item);
+
+                return (
+                  <View style={styles.reviewCard}>
+                    <MutedText style={styles.category}>
+                      {item.category}
+                    </MutedText>
+                    <BodyText style={styles.topic}>{item.topic}</BodyText>
+                    <MutedText style={styles.learned}>
+                      Learned {formatLearnedAt(item.learnedAt)}
+                    </MutedText>
+                    {nextReview ? (
+                      <BaseButton
+                        title="REVIEW NOW"
+                        onPress={() =>
+                          completeReview({ item, review: nextReview })
+                        }
+                        disabled={!isReviewDue(nextReview)}
+                        variant="black"
+                      />
+                    ) : (
+                      <MutedText>Review cycle complete.</MutedText>
+                    )}
+                  </View>
+                );
+              }}
+              style={styles.reviewCarousel}
+              showsHorizontalScrollIndicator={false}
+            />
+          ) : (
+            <View style={styles.reviewCard}>
               <MutedText>No reviews scheduled yet.</MutedText>
-            )}
-          </View>
+            </View>
+          )}
         </View>
 
         <View style={styles.section}>
@@ -261,6 +293,7 @@ const styles = StyleSheet.create({
   },
   section: {
     marginBottom: Spacing.xxl,
+    overflow: "visible",
   },
   sectionTitle: {
     marginBottom: Spacing.md,
@@ -290,11 +323,21 @@ const styles = StyleSheet.create({
   },
   reviewCard: {
     ...hardShadow,
+    width: 300,
     padding: Spacing.lg,
     borderWidth: borderWidths.default,
     borderColor: colors.border,
     borderRadius: radius.lg,
     backgroundColor: colors.surface,
+  },
+  reviewCarousel: {
+    overflow: "visible",
+  },
+  reviewCarouselContent: {
+    paddingRight: Spacing.lg,
+  },
+  cardSeparator: {
+    width: Spacing.md,
   },
   category: {
     marginBottom: Spacing.sm,
