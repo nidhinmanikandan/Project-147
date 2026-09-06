@@ -1,11 +1,13 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { useRouter } from "expo-router";
 
 import { AddLearningForm } from "@/components/learning/AddLearningForm";
+import { BodyText } from "@/components/ui/BodyText";
 import { MutedText } from "@/components/ui/MutedText";
-import { colors, Spacing } from "@/constants/theme";
-import { saveLearningItem } from "@/services/learningStorage";
+import { SectionTitle } from "@/components/ui/SectionTitle";
+import { borderWidths, colors, radius, Spacing } from "@/constants/theme";
+import { getLearningItems, saveLearningItem } from "@/services/learningStorage";
 import { scheduleReviews } from "@/utils/scheduleReviews";
 import type { LearningItem } from "@/types/learning";
 
@@ -18,6 +20,11 @@ export default function AddLearningScreen() {
   const [topic, setTopic] = useState("");
   const [category, setCategory] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [learningItems, setLearningItems] = useState<LearningItem[]>([]);
+
+  useEffect(() => {
+    getLearningItems().then(setLearningItems);
+  }, []);
 
   async function handleSubmit() {
     const trimmedTopic = topic.trim();
@@ -46,6 +53,7 @@ export default function AddLearningScreen() {
     setTopic("");
     setCategory("");
     setErrorMessage("");
+    setLearningItems((items) => [...items, item]);
     router.back();
   }
 
@@ -63,9 +71,42 @@ export default function AddLearningScreen() {
           onSubmit={handleSubmit}
         />
         {errorMessage ? <MutedText>{errorMessage}</MutedText> : null}
+
+        <View style={styles.recentSection}>
+          <SectionTitle>Recent learning</SectionTitle>
+          {learningItems.length > 0 ? (
+            [...learningItems]
+              .sort(
+                (first, second) =>
+                  new Date(second.learnedAt).getTime() -
+                  new Date(first.learnedAt).getTime(),
+              )
+              .map((item) => (
+                <View key={item.id} style={styles.recentItem}>
+                  <BodyText>{item.topic}</BodyText>
+                  <MutedText>
+                    {item.category} - {formatLearnedAt(item.learnedAt)}
+                  </MutedText>
+                </View>
+              ))
+          ) : (
+            <MutedText>No learning added yet.</MutedText>
+          )}
+        </View>
       </View>
     </ScrollView>
   );
+}
+
+function formatLearnedAt(learnedAt: string) {
+  const date = new Date(learnedAt);
+  return Number.isNaN(date.getTime())
+    ? learnedAt
+    : date.toLocaleDateString(undefined, {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      });
 }
 
 const styles = StyleSheet.create({
@@ -78,5 +119,16 @@ const styles = StyleSheet.create({
     width: "100%",
     maxWidth: 720,
     alignSelf: "center",
+  },
+  recentSection: {
+    marginTop: Spacing.xxxl,
+    gap: Spacing.md,
+  },
+  recentItem: {
+    padding: Spacing.md,
+    borderWidth: borderWidths.default,
+    borderColor: colors.border,
+    borderRadius: radius.md,
+    backgroundColor: colors.surface,
   },
 });

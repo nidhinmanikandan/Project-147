@@ -73,6 +73,7 @@ export function AddLearningForm({
 
 const styles = StyleSheet.create({
   form: {
+    marginTop: Spacing.xxxl,
     gap: Spacing.md,
   },
   field: {
