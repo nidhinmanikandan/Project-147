@@ -115,6 +115,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.sm,
   },
   metadata: {
+    fontFamily: typography.body.fontFamily,
     flexShrink: 1,
     color: colors.mutedText,
     fontSize: 13,
@@ -128,6 +129,7 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   title: {
+    fontFamily: typography.heading.fontFamily,
     flex: 1,
     color: colors.text,
     fontSize: 15,

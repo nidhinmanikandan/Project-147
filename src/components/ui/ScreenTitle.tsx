@@ -8,6 +8,7 @@ export function ScreenTitle({ style, ...props }: TextProps) {
 
 const styles = StyleSheet.create({
   title: {
+    fontFamily: typography.heading.fontFamily,
     color: colors.text,
     fontSize: 28,
     fontWeight: typography.heading.fontWeight,

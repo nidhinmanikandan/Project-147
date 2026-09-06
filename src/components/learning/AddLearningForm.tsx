@@ -87,12 +87,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.lg,
   },
   prefix: {
+    fontFamily: typography.label.fontFamily,
     color: colors.text,
     fontSize: 18,
     fontWeight: typography.label.fontWeight,
     marginRight: Spacing.sm,
   },
   input: {
+    fontFamily: typography.body.fontFamily,
     flex: 1,
     minHeight: 48,
     color: colors.text,
@@ -101,6 +103,7 @@ const styles = StyleSheet.create({
     paddingVertical: 0,
   },
   chevron: {
+    fontFamily: typography.label.fontFamily,
     color: colors.text,
     fontSize: 14,
     fontWeight: typography.label.fontWeight,
@@ -122,6 +125,7 @@ const styles = StyleSheet.create({
     opacity: 0.72,
   },
   plus: {
+    fontFamily: typography.heading.fontFamily,
     color: colors.text,
     fontSize: 28,
     fontWeight: typography.heading.fontWeight,

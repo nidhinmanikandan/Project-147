@@ -8,6 +8,7 @@ export function BodyText({ style, ...props }: TextProps) {
 
 const styles = StyleSheet.create({
   text: {
+    fontFamily: typography.body.fontFamily,
     color: colors.text,
     fontSize: 16,
     fontWeight: typography.body.fontWeight,

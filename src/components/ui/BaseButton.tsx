@@ -1,6 +1,12 @@
 import { Pressable, StyleSheet, Text } from "react-native";
 
-import { colors, hardShadow, radius, Spacing } from "@/constants/theme";
+import {
+  colors,
+  hardShadow,
+  radius,
+  Spacing,
+  typography,
+} from "@/constants/theme";
 
 type BaseButtonProps = {
   title: string;
@@ -62,6 +68,7 @@ const styles = StyleSheet.create({
     opacity: 0.45,
   },
   label: {
+    fontFamily: typography.label.fontFamily,
     color: colors.text,
     fontSize: 15,
     fontWeight: "700",

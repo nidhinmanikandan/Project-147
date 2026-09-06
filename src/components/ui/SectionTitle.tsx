@@ -8,6 +8,7 @@ export function SectionTitle({ style, ...props }: TextProps) {
 
 const styles = StyleSheet.create({
   title: {
+    fontFamily: typography.label.fontFamily,
     color: colors.text,
     fontSize: 18,
     fontWeight: typography.label.fontWeight,

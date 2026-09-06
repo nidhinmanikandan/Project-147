@@ -116,7 +116,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,
-    
   },
   content: {
     width: "100%",
@@ -153,6 +152,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
   },
   statNumber: {
+    fontFamily: typography.heading.fontFamily,
     color: colors.text,
     fontSize: 28,
     fontWeight: typography.heading.fontWeight,
@@ -170,6 +170,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.sm,
   },
   topic: {
+    fontFamily: typography.heading.fontFamily,
     fontSize: 22,
     fontWeight: typography.heading.fontWeight,
   },

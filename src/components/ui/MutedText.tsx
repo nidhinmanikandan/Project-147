@@ -8,6 +8,7 @@ export function MutedText({ style, ...props }: TextProps) {
 
 const styles = StyleSheet.create({
   text: {
+    fontFamily: typography.body.fontFamily,
     color: colors.mutedText,
     fontSize: 14,
     fontWeight: typography.body.fontWeight,
