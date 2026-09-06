@@ -27,7 +27,7 @@ export function AddLearningForm({
 }: AddLearningFormProps) {
   return (
     <View style={styles.form}>
-      <ScreenTitle>What did you learn?</ScreenTitle>
+      <ScreenTitle>What did you learn today?</ScreenTitle>
 
       <View style={styles.field}>
         <Text style={styles.prefix}>#</Text>
