@@ -126,6 +126,7 @@ const styles = StyleSheet.create({
     paddingBottom: 120,
   },
   greeting: {
+    fontFamily: "Poppins_800ExtraBold",
     marginTop: Spacing.xxxl,
     marginBottom: Spacing.xxxl,
   },

@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
     fontFamily: typography.label.fontFamily,
     color: colors.text,
     fontSize: 15,
-    fontWeight: "700",
+    fontWeight: typography.label.fontWeight,
   },
   blackLabel: {
     color: colors.surface,

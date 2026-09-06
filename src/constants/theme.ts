@@ -92,16 +92,16 @@ export const borderWidths = {
 export const typography = {
   heading: {
     fontFamily: "Poppins_800ExtraBold",
-    fontWeight: "800" as const,
+    fontWeight: "normal" as const,
     lineHeight: 1.05,
   },
   body: {
     fontFamily: "Poppins_400Regular",
-    fontWeight: "400" as const,
+    fontWeight: "normal" as const,
   },
   label: {
     fontFamily: "Poppins_700Bold",
-    fontWeight: "700" as const,
+    fontWeight: "normal" as const,
   },
 } as const;
 
