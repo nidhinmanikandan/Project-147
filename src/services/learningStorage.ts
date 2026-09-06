@@ -19,32 +19,35 @@ async function readLearningItems(): Promise<LearningItem[]> {
   }
 }
 
-async function writeLearningItems(items: LearningItem[]): Promise<void> {
+async function writeLearningItems(items: LearningItem[]): Promise<boolean> {
   try {
     await AsyncStorage.setItem(LEARNING_ITEMS_KEY, JSON.stringify(items));
+    return true;
   } catch {}
+
+  return false;
 }
 
 export async function getLearningItems(): Promise<LearningItem[]> {
   return readLearningItems();
 }
 
-export async function saveLearningItem(item: LearningItem): Promise<void> {
+export async function saveLearningItem(item: LearningItem): Promise<boolean> {
   const items = await readLearningItems();
-  await writeLearningItems([...items, item]);
+  return writeLearningItems([...items, item]);
 }
 
-export async function updateLearningItem(item: LearningItem): Promise<void> {
+export async function updateLearningItem(item: LearningItem): Promise<boolean> {
   const items = await readLearningItems();
   const itemExists = items.some((storedItem) => storedItem.id === item.id);
   const updatedItems = itemExists
     ? items.map((storedItem) => (storedItem.id === item.id ? item : storedItem))
     : [...items, item];
 
-  await writeLearningItems(updatedItems);
+  return writeLearningItems(updatedItems);
 }
 
-export async function deleteLearningItem(id: string): Promise<void> {
+export async function deleteLearningItem(id: string): Promise<boolean> {
   const items = await readLearningItems();
-  await writeLearningItems(items.filter((item) => item.id !== id));
+  return writeLearningItems(items.filter((item) => item.id !== id));
 }

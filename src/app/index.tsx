@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useCallback, useState } from "react";
+import { useFocusEffect, useRouter } from "expo-router";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 
 import { BodyText } from "@/components/ui/BodyText";
@@ -82,22 +83,25 @@ function isReviewDue(review: LearningReview, now = new Date()) {
 }
 
 export default function HomeScreen() {
+  const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [learningItems, setLearningItems] = useState<LearningItem[]>([]);
 
-  useEffect(() => {
-    let isMounted = true;
+  useFocusEffect(
+    useCallback(() => {
+      let isMounted = true;
 
-    getLearningItems().then((items) => {
-      if (isMounted) {
-        setLearningItems(items);
-      }
-    });
+      getLearningItems().then((items) => {
+        if (isMounted) {
+          setLearningItems(items);
+        }
+      });
 
-    return () => {
-      isMounted = false;
-    };
-  }, []);
+      return () => {
+        isMounted = false;
+      };
+    }, []),
+  );
 
   const reviewState = getReviewState(learningItems);
 
@@ -230,7 +234,7 @@ export default function HomeScreen() {
         <IconButton
           accessibilityLabel="Add learning"
           icon={{ ios: "plus", android: "add", web: "add" }}
-          onPress={noop}
+          onPress={() => router.push("/add-learning")}
         />
       </View>
     </View>
