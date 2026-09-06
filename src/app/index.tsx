@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 
 import { BodyText } from "@/components/ui/BodyText";
@@ -7,6 +7,7 @@ import { IconButton } from "@/components/ui/IconButton";
 import { MutedText } from "@/components/ui/MutedText";
 import { ScreenTitle } from "@/components/ui/ScreenTitle";
 import { SectionTitle } from "@/components/ui/SectionTitle";
+import { getLearningItems } from "@/services/learningStorage";
 import {
   borderWidths,
   colors,
@@ -15,11 +16,80 @@ import {
   Spacing,
   typography,
 } from "@/constants/theme";
+import type { LearningItem, LearningReview } from "@/types/learning";
 
 const noop = () => {};
 
+type ReviewWithItem = {
+  item: LearningItem;
+  review: LearningReview;
+};
+
+function getReviewState(items: LearningItem[], now = new Date()) {
+  const endOfToday = new Date(now.getTime());
+  endOfToday.setHours(23, 59, 59, 999);
+
+  const reviews = items.flatMap((item) =>
+    item.reviews.map((review) => ({ item, review })),
+  );
+  const incompleteReviews = reviews.filter(({ review }) => !review.completed);
+  const dueReviews = incompleteReviews.filter(
+    ({ review }) =>
+      new Date(review.scheduledFor).getTime() <= endOfToday.getTime(),
+  );
+  const upcomingReviews = incompleteReviews.filter(
+    ({ review }) =>
+      new Date(review.scheduledFor).getTime() > endOfToday.getTime(),
+  );
+  const nextReview = [...dueReviews, ...upcomingReviews].sort(
+    (first, second) =>
+      new Date(first.review.scheduledFor).getTime() -
+      new Date(second.review.scheduledFor).getTime(),
+  )[0];
+  const todayTopics = dueReviews.filter(
+    ({ item }, index, dueItems) =>
+      dueItems.findIndex(({ item: dueItem }) => dueItem.id === item.id) ===
+      index,
+  );
+
+  return {
+    dueCount: dueReviews.length,
+    upcomingCount: upcomingReviews.length,
+    nextReview: nextReview ?? null,
+    todayTopics,
+  };
+}
+
+function formatLearnedAt(learnedAt: string) {
+  const date = new Date(learnedAt);
+  return Number.isNaN(date.getTime())
+    ? learnedAt
+    : date.toLocaleDateString(undefined, {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      });
+}
+
 export default function HomeScreen() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [learningItems, setLearningItems] = useState<LearningItem[]>([]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    getLearningItems().then((items) => {
+      if (isMounted) {
+        setLearningItems(items);
+      }
+    });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const reviewState = getReviewState(learningItems);
 
   return (
     <View style={styles.container}>
@@ -33,11 +103,11 @@ export default function HomeScreen() {
           <SectionTitle style={styles.sectionTitle}>TODAY</SectionTitle>
           <View style={styles.statsRow}>
             <View style={styles.statCard}>
-              <Text style={styles.statNumber}>2</Text>
+              <Text style={styles.statNumber}>{reviewState.dueCount}</Text>
               <MutedText>reviews due</MutedText>
             </View>
             <View style={styles.statCard}>
-              <Text style={styles.statNumber}>1</Text>
+              <Text style={styles.statNumber}>{reviewState.upcomingCount}</Text>
               <MutedText>upcoming</MutedText>
             </View>
           </View>
@@ -46,10 +116,23 @@ export default function HomeScreen() {
         <View style={styles.section}>
           <SectionTitle style={styles.sectionTitle}>NEXT REVIEW</SectionTitle>
           <View style={styles.reviewCard}>
-            <MutedText style={styles.category}>DBMS</MutedText>
-            <BodyText style={styles.topic}>Normalization</BodyText>
-            <MutedText style={styles.learned}>Learned 4 days ago</MutedText>
-            <BaseButton title="REVIEW NOW" onPress={noop} variant="black" />
+            {reviewState.nextReview ? (
+              <>
+                <MutedText style={styles.category}>
+                  {reviewState.nextReview.item.category}
+                </MutedText>
+                <BodyText style={styles.topic}>
+                  {reviewState.nextReview.item.topic}
+                </BodyText>
+                <MutedText style={styles.learned}>
+                  Learned{" "}
+                  {formatLearnedAt(reviewState.nextReview.item.learnedAt)}
+                </MutedText>
+                <BaseButton title="REVIEW NOW" onPress={noop} variant="black" />
+              </>
+            ) : (
+              <MutedText>No reviews scheduled yet.</MutedText>
+            )}
           </View>
         </View>
 
@@ -58,9 +141,13 @@ export default function HomeScreen() {
             TODAY&apos;S REVIEWS
           </SectionTitle>
           <View style={styles.reviewList}>
-            <BodyText>• Normalization</BodyText>
-            <BodyText>• OOP — Polymorphism</BodyText>
-            <BodyText>• Arrays — Sliding Window</BodyText>
+            {reviewState.todayTopics.length > 0 ? (
+              reviewState.todayTopics.map(({ item }) => (
+                <BodyText key={item.id}>• {item.topic}</BodyText>
+              ))
+            ) : (
+              <MutedText>No reviews due today.</MutedText>
+            )}
           </View>
         </View>
       </ScrollView>
