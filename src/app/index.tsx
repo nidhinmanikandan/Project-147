@@ -1,98 +1,185 @@
-import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-
-import { AnimatedIcon } from '@/components/animated-icon';
-import { HintRow } from '@/components/hint-row';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
-
-function getDevMenuHint() {
-  if (Platform.OS === 'web') {
-    return <ThemedText type="small">use browser devtools</ThemedText>;
-  }
-  if (Device.isDevice) {
-    return (
-      <ThemedText type="small">
-        shake device or press <ThemedText type="code">m</ThemedText> in terminal
-      </ThemedText>
-    );
-  }
-  const shortcut = Platform.OS === 'android' ? 'cmd+m (or ctrl+m)' : 'cmd+d';
-  return (
-    <ThemedText type="small">
-      press <ThemedText type="code">{shortcut}</ThemedText>
-    </ThemedText>
-  );
-}
+import { StyleSheet, Text, View, Pressable, ScrollView } from "react-native";
 
 export default function HomeScreen() {
   return (
-    <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.heroSection}>
-          <AnimatedIcon />
-          <ThemedText type="title" style={styles.title}>
-            Welcome to&nbsp;Expo
-          </ThemedText>
-        </ThemedView>
+    <View style={styles.container}>
+      <ScrollView
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Greeting */}
+        <Text style={styles.greeting}>GOOD MORNING, NIDHIN 👋</Text>
 
-        <ThemedText type="code" style={styles.code}>
-          get started
-        </ThemedText>
+        {/* Today */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>TODAY</Text>
 
-        <ThemedView type="backgroundElement" style={styles.stepContainer}>
-          <HintRow
-            title="Try editing"
-            hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
-          />
-          <HintRow title="Dev tools" hint={getDevMenuHint()} />
-          <HintRow
-            title="Fresh start"
-            hint={<ThemedText type="code">npm run reset-project</ThemedText>}
-          />
-        </ThemedView>
+          <View style={styles.todayRow}>
+            <View>
+              <Text style={styles.todayNumber}>2</Text>
+              <Text style={styles.todayLabel}>reviews due</Text>
+            </View>
 
-        {Platform.OS === 'web' && <WebBadge />}
-      </SafeAreaView>
-    </ThemedView>
+            <View>
+              <Text style={styles.todayNumber}>1</Text>
+              <Text style={styles.todayLabel}>upcoming</Text>
+            </View>
+          </View>
+        </View>
+
+        {/* Next Review */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>NEXT REVIEW</Text>
+
+          <View style={styles.reviewCard}>
+            <Text style={styles.category}>DBMS</Text>
+
+            <Text style={styles.topic}>Normalization</Text>
+
+            <Text style={styles.learned}>
+              Learned 4 days ago
+            </Text>
+
+            <Pressable style={styles.reviewButton}>
+              <Text style={styles.reviewButtonText}>
+                REVIEW NOW
+              </Text>
+            </Pressable>
+          </View>
+        </View>
+
+        {/* Today's Reviews */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>TODAY'S REVIEWS</Text>
+
+          <View style={styles.reviewList}>
+            <Text style={styles.reviewItem}>• Normalization</Text>
+            <Text style={styles.reviewItem}>• OOP — Polymorphism</Text>
+            <Text style={styles.reviewItem}>• Arrays — Sliding Window</Text>
+          </View>
+        </View>
+      </ScrollView>
+
+      {/* Add Button */}
+      <Pressable style={styles.addButton}>
+        <Text style={styles.addButtonText}>+</Text>
+      </Pressable>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    flexDirection: 'row',
+    backgroundColor: "#FFFFFF",
   },
-  safeArea: {
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    alignItems: 'center',
-    gap: Spacing.three,
-    paddingBottom: BottomTabInset + Spacing.three,
-    maxWidth: MaxContentWidth,
+
+  content: {
+    paddingHorizontal: 24,
+    paddingTop: 70,
+    paddingBottom: 120,
   },
-  heroSection: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    gap: Spacing.four,
+
+  greeting: {
+    fontSize: 32,
+    fontWeight: "700",
+    marginBottom: 40,
+
   },
-  title: {
-    textAlign: 'center',
+
+  section: {
+    marginBottom: 32,
   },
-  code: {
-    textTransform: 'uppercase',
+
+  sectionTitle: {
+    fontSize: 13,
+    fontWeight: "700",
+    letterSpacing: 1.5,
+    color: "#777777",
+    marginBottom: 14,
   },
-  stepContainer: {
-    gap: Spacing.three,
-    alignSelf: 'stretch',
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.four,
-    borderRadius: Spacing.four,
+
+  todayRow: {
+    flexDirection: "row",
+    gap: 50,
+  },
+
+  todayNumber: {
+    fontSize: 28,
+    fontWeight: "700",
+  },
+
+  todayLabel: {
+    fontSize: 14,
+    color: "#777777",
+    marginTop: 2,
+  },
+
+  reviewCard: {
+    borderWidth: 1,
+    borderColor: "#E5E5E5",
+    borderRadius: 16,
+    padding: 20,
+  },
+
+  category: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: "#777777",
+    marginBottom: 6,
+  },
+
+  topic: {
+    fontSize: 22,
+    fontWeight: "700",
+  },
+
+  learned: {
+    fontSize: 14,
+    color: "#777777",
+    marginTop: 8,
+    marginBottom: 20,
+  },
+
+  reviewButton: {
+    backgroundColor: "#111111",
+    paddingVertical: 14,
+    borderRadius: 10,
+    alignItems: "center",
+  },
+
+  reviewButtonText: {
+    color: "#FFFFFF",
+    fontSize: 13,
+    fontWeight: "700",
+    letterSpacing: 1,
+  },
+
+  reviewList: {
+    gap: 14,
+  },
+
+  reviewItem: {
+    fontSize: 16,
+  },
+
+  addButton: {
+    position: "absolute",
+    right: 24,
+    bottom: 30,
+    width: 58,
+    height: 58,
+    borderRadius: 29,
+    backgroundColor: "#111111",
+    alignItems: "center",
+    justifyContent: "center",
+    elevation: 5,
+  },
+
+  addButtonText: {
+    color: "#FFFFFF",
+    fontSize: 32,
+    fontWeight: "300",
+    marginTop: -3,
   },
 });
