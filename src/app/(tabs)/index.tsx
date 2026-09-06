@@ -201,6 +201,14 @@ export default function HomeScreen() {
                       <MutedText style={styles.learned}>
                         Learned {formatLearnedAt(item.learnedAt)}
                       </MutedText>
+                      <View style={styles.reviewStatuses}>
+                        {item.reviews.map((review) => (
+                          <MutedText key={review.day}>
+                            Review {review.day}:{" "}
+                            {review.completed ? "Completed" : "Pending"}
+                          </MutedText>
+                        ))}
+                      </View>
                       {nextReview ? (
                         <BaseButton
                           title="REVIEW NOW"
@@ -370,6 +378,10 @@ const styles = StyleSheet.create({
   },
   reviewList: {
     gap: Spacing.md,
+  },
+  reviewStatuses: {
+    gap: Spacing.xs,
+    marginBottom: Spacing.md,
   },
   floatingActions: {
     position: "absolute",

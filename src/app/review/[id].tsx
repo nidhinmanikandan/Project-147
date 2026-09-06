@@ -16,7 +16,10 @@ import {
   Spacing,
   typography,
 } from "@/constants/theme";
-import { getLearningItems } from "@/services/learningStorage";
+import {
+  getLearningItems,
+  updateLearningItem,
+} from "@/services/learningStorage";
 import type { LearningItem } from "@/types/learning";
 
 function formatDate(value: string) {
@@ -41,7 +44,38 @@ export default function ReviewScreen() {
     });
   }, [id]);
 
-  const nextReview = item?.reviews.find((review) => !review.completed) ?? null;
+  const currentReview =
+    item?.reviews.find((review) => !review.completed) ?? null;
+  const completedReview = item
+    ? ([...item.reviews].reverse().find((review) => review.completed) ?? null)
+    : null;
+
+  function isCurrentReviewDue() {
+    return currentReview
+      ? new Date(currentReview.scheduledFor).getTime() <= Date.now()
+      : false;
+  }
+
+  async function handleRemember() {
+    if (!item || !currentReview) {
+      return;
+    }
+
+    const completedAt = new Date().toISOString();
+    const updatedItem: LearningItem = {
+      ...item,
+      reviews: item.reviews.map((review) =>
+        review.day === currentReview.day
+          ? { ...review, completed: true, completedAt }
+          : review,
+      ),
+    };
+
+    const saved = await updateLearningItem(updatedItem);
+    if (saved) {
+      setItem(updatedItem);
+    }
+  }
 
   return (
     <ScrollView contentContainerStyle={styles.content}>
@@ -66,12 +100,29 @@ export default function ReviewScreen() {
             </BodyText>
 
             <View style={styles.actions}>
+              {currentReview ? (
+                <>
+                  {completedReview ? (
+                    <MutedText>{`Review ${completedReview.day} completed`}</MutedText>
+                  ) : null}
+                  <BaseButton
+                    title="I REMEMBER"
+                    onPress={handleRemember}
+                    disabled={!isCurrentReviewDue()}
+                    variant="yellow"
+                  />
+                </>
+              ) : (
+                <MutedText>
+                  {completedReview
+                    ? `Review ${completedReview.day} completed`
+                    : "Review cycle complete."}
+                </MutedText>
+              )}
               <BaseButton
-                title="I REMEMBER"
-                onPress={() => {}}
-                variant="yellow"
+                title="NEED TO REVIEW"
+                onPress={() => router.back()}
               />
-              <BaseButton title="NEED TO REVIEW" onPress={() => {}} />
             </View>
 
             <MutedText style={styles.learned}>
@@ -97,8 +148,8 @@ export default function ReviewScreen() {
 
             <SectionTitle style={styles.nextTitle}>NEXT REVIEW</SectionTitle>
             <MutedText>
-              {nextReview
-                ? formatDate(nextReview.scheduledFor)
+              {currentReview
+                ? formatDate(currentReview.scheduledFor)
                 : "Review cycle complete."}
             </MutedText>
           </>
