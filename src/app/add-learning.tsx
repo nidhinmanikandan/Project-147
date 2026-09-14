@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { Alert, ScrollView, StyleSheet, View } from "react-native";
 import { useRouter } from "expo-router";
 
 import { AddLearningForm } from "@/components/learning/AddLearningForm";
@@ -73,6 +73,17 @@ export default function AddLearningScreen() {
     setErrorMessage("");
   }
 
+  function confirmDelete(id: string) {
+    Alert.alert("Delete this learning item?", undefined, [
+      { text: "CANCEL", style: "cancel" },
+      {
+        text: "DELETE",
+        style: "destructive",
+        onPress: () => void handleDelete(id),
+      },
+    ]);
+  }
+
   return (
     <ScrollView
       contentContainerStyle={styles.content}
@@ -108,7 +119,7 @@ export default function AddLearningScreen() {
                   <IconButton
                     accessibilityLabel={`Delete ${item.topic}`}
                     icon={{ ios: "minus", android: "remove", web: "remove" }}
-                    onPress={() => handleDelete(item.id)}
+                    onPress={() => confirmDelete(item.id)}
                   />
                 </View>
               ))
