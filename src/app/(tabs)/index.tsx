@@ -102,15 +102,36 @@ function getNextReview(item: LearningItem) {
   );
 }
 
+function getTimeGreeting(date = new Date()) {
+  const hour = date.getHours();
+
+  if (hour < 12) {
+    return "GOOD MORNING";
+  }
+
+  if (hour < 17) {
+    return "GOOD AFTERNOON";
+  }
+
+  return "GOOD EVENING";
+}
+
 export default function HomeScreen() {
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [learningItems, setLearningItems] = useState<LearningItem[]>([]);
   const [userName, setUserName] = useState("");
+  const [timeGreeting, setTimeGreeting] = useState(getTimeGreeting);
 
   useFocusEffect(
     useCallback(() => {
       let isMounted = true;
+      const updateTimeGreeting = () => {
+        setTimeGreeting(getTimeGreeting());
+      };
+
+      updateTimeGreeting();
+      const greetingInterval = setInterval(updateTimeGreeting, 60_000);
 
       getLearningItems().then((items) => {
         if (isMounted) {
@@ -125,6 +146,7 @@ export default function HomeScreen() {
 
       return () => {
         isMounted = false;
+        clearInterval(greetingInterval);
       };
     }, []),
   );
@@ -161,7 +183,7 @@ export default function HomeScreen() {
         showsVerticalScrollIndicator={false}
       >
         <ScreenTitle style={styles.greeting}>
-          GOOD MORNING, {userName.toUpperCase()}.
+          {timeGreeting}, {userName.toUpperCase()}.
         </ScreenTitle>
 
         <View style={styles.section}>
