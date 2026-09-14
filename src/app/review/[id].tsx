@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 
+
 import { BodyText } from "@/components/ui/BodyText";
 import { BaseButton } from "@/components/ui/BaseButton";
 import { IconButton } from "@/components/ui/IconButton";
@@ -21,6 +22,7 @@ import {
   updateLearningItem,
 } from "@/services/learningStorage";
 import type { LearningItem } from "@/types/learning";
+
 
 function formatDate(value: string) {
   const date = new Date(value);
@@ -101,7 +103,7 @@ export default function ReviewScreen() {
               {currentReview ? (
                 <>
                   {completedReview ? (
-                    <MutedText>{`Review ${completedReview.day} completed`}</MutedText>
+                    <MutedText>{`Review ${completedReview.day} completed ✔`}</MutedText>
                   ) : null}
                   <BaseButton
                     title="I REMEMBER"
@@ -113,7 +115,7 @@ export default function ReviewScreen() {
               ) : (
                 <MutedText>
                   {completedReview
-                    ? `Review ${completedReview.day} completed`
+                    ? `Review ${completedReview.day} completed ✔`
                     : "Review cycle complete."}
                 </MutedText>
               )}
@@ -138,7 +140,7 @@ export default function ReviewScreen() {
                   </BodyText>
                   <MutedText>{formatDate(review.scheduledFor)}</MutedText>
                   <MutedText>
-                    {review.completed ? "Completed" : "Pending"}
+                    {review.completed ? "Completed ✔" : "Pending"}
                   </MutedText>
                 </View>
               ))}

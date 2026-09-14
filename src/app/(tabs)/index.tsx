@@ -338,6 +338,7 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
     borderRadius: radius.md,
     backgroundColor: colors.surface,
+    
   },
   statNumber: {
     fontFamily: typography.heading.fontFamily,
@@ -366,11 +367,15 @@ const styles = StyleSheet.create({
   },
   category: {
     marginBottom: Spacing.sm,
+    textAlign: "right",
+    marginTop: 8,
   },
   topic: {
     fontFamily: typography.heading.fontFamily,
     fontSize: 22,
     fontWeight: typography.heading.fontWeight,
+    marginTop: -40,
+    maxWidth: 200,
   },
   learned: {
     marginTop: Spacing.sm,
