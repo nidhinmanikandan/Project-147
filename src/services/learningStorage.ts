@@ -3,6 +3,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import type { LearningItem } from "../types/learning";
 
 const LEARNING_ITEMS_KEY = "@recall/learning-items";
+const USER_NAME_KEY = "@recall/user-name";
 
 async function readLearningItems(): Promise<LearningItem[]> {
   try {
@@ -50,4 +51,28 @@ export async function updateLearningItem(item: LearningItem): Promise<boolean> {
 export async function deleteLearningItem(id: string): Promise<boolean> {
   const items = await readLearningItems();
   return writeLearningItems(items.filter((item) => item.id !== id));
+}
+
+export async function getUserName(): Promise<string | null> {
+  try {
+    const userName = await AsyncStorage.getItem(USER_NAME_KEY);
+    return userName?.trim() || null;
+  } catch {
+    return null;
+  }
+}
+
+export async function saveUserName(userName: string): Promise<boolean> {
+  const trimmedName = userName.trim();
+
+  if (!trimmedName) {
+    return false;
+  }
+
+  try {
+    await AsyncStorage.setItem(USER_NAME_KEY, trimmedName);
+    return true;
+  } catch {
+    return false;
+  }
 }

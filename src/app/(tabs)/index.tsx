@@ -17,6 +17,7 @@ import { ScreenTitle } from "@/components/ui/ScreenTitle";
 import { SectionTitle } from "@/components/ui/SectionTitle";
 import {
   getLearningItems,
+  getUserName,
   updateLearningItem,
 } from "@/services/learningStorage";
 import {
@@ -105,6 +106,7 @@ export default function HomeScreen() {
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [learningItems, setLearningItems] = useState<LearningItem[]>([]);
+  const [userName, setUserName] = useState("");
 
   useFocusEffect(
     useCallback(() => {
@@ -113,6 +115,11 @@ export default function HomeScreen() {
       getLearningItems().then((items) => {
         if (isMounted) {
           setLearningItems(items);
+        }
+      });
+      getUserName().then((name) => {
+        if (isMounted) {
+          setUserName(name ?? "");
         }
       });
 
@@ -153,7 +160,9 @@ export default function HomeScreen() {
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
-        <ScreenTitle style={styles.greeting}>GOOD MORNING, NIDHIN.</ScreenTitle>
+        <ScreenTitle style={styles.greeting}>
+          GOOD MORNING, {userName.toUpperCase()}.
+        </ScreenTitle>
 
         <View style={styles.section}>
           <SectionTitle style={styles.sectionTitle}>TODAY</SectionTitle>
@@ -338,7 +347,6 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
     borderRadius: radius.md,
     backgroundColor: colors.surface,
-    
   },
   statNumber: {
     fontFamily: typography.heading.fontFamily,
