@@ -15,6 +15,7 @@ import { IconButton } from "@/components/ui/IconButton";
 import { MutedText } from "@/components/ui/MutedText";
 import { ScreenTitle } from "@/components/ui/ScreenTitle";
 import { SectionTitle } from "@/components/ui/SectionTitle";
+import { getDailyTasks, updateDailyTask } from "@/services/dailyTasksStorage";
 import {
   getLearningItems,
   getUserName,
@@ -29,6 +30,7 @@ import {
   typography,
 } from "@/constants/theme";
 import type { LearningItem, LearningReview } from "@/types/learning";
+import type { DailyTask } from "@/types/dailyTask";
 
 const noop = () => {};
 
@@ -116,10 +118,18 @@ function getTimeGreeting(date = new Date()) {
   return "GOOD EVENING";
 }
 
+function getTodayKey(date = new Date()) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
 export default function HomeScreen() {
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [learningItems, setLearningItems] = useState<LearningItem[]>([]);
+  const [dailyTasks, setDailyTasks] = useState<DailyTask[]>([]);
   const [userName, setUserName] = useState("");
   const [timeGreeting, setTimeGreeting] = useState(getTimeGreeting);
 
@@ -143,6 +153,11 @@ export default function HomeScreen() {
           setUserName(name ?? "");
         }
       });
+      getDailyTasks().then((tasks) => {
+        if (isMounted) {
+          setDailyTasks(tasks);
+        }
+      });
 
       return () => {
         isMounted = false;
@@ -152,6 +167,7 @@ export default function HomeScreen() {
   );
 
   const reviewState = getReviewState(learningItems);
+  const today = getTodayKey();
 
   async function completeReview({ item, review }: ReviewWithItem) {
     if (review.completed || !isReviewDue(review)) {
@@ -174,6 +190,22 @@ export default function HomeScreen() {
         storedItem.id === updatedItem.id ? updatedItem : storedItem,
       ),
     );
+  }
+
+  async function toggleDailyTask(task: DailyTask) {
+    const updatedTask = {
+      ...task,
+      completedOn: task.completedOn === today ? null : today,
+    };
+    const saved = await updateDailyTask(updatedTask);
+
+    if (saved) {
+      setDailyTasks((tasks) =>
+        tasks.map((currentTask) =>
+          currentTask.id === task.id ? updatedTask : currentTask,
+        ),
+      );
+    }
   }
 
   return (
@@ -267,6 +299,59 @@ export default function HomeScreen() {
         </View>
 
         <View style={styles.section}>
+          <View style={styles.sectionHeadingRow}>
+            <SectionTitle style={styles.sectionTitle}>DAILY TASKS</SectionTitle>
+            <Pressable
+              accessibilityRole="button"
+              onPress={() => router.push("/daily-tasks")}
+            >
+              <MutedText style={styles.manageTasks}>MANAGE</MutedText>
+            </Pressable>
+          </View>
+          {dailyTasks.length > 0 ? (
+            <View style={styles.dailyTaskList}>
+              {dailyTasks.map((task) => {
+                const isComplete = task.completedOn === today;
+
+                return (
+                  <Pressable
+                    key={task.id}
+                    accessibilityRole="checkbox"
+                    accessibilityState={{ checked: isComplete }}
+                    onPress={() => void toggleDailyTask(task)}
+                    style={styles.dailyTaskRow}
+                  >
+                    <View
+                      style={[
+                        styles.dailyTaskCheckbox,
+                        isComplete && styles.dailyTaskChecked,
+                      ]}
+                    >
+                      {isComplete ? (
+                        <Text style={styles.checkmark}>OK</Text>
+                      ) : null}
+                    </View>
+                    <BodyText
+                      style={isComplete ? styles.completedTask : undefined}
+                    >
+                      {task.title}
+                    </BodyText>
+                  </Pressable>
+                );
+              })}
+            </View>
+          ) : (
+            <Pressable
+              accessibilityRole="button"
+              onPress={() => router.push("/daily-tasks")}
+              style={styles.emptyTasks}
+            >
+              <MutedText>No daily tasks yet. Add one to get started.</MutedText>
+            </Pressable>
+          )}
+        </View>
+
+        <View style={styles.section}>
           <SectionTitle style={styles.sectionTitle}>
             TODAY&apos;S REVIEWS
           </SectionTitle>
@@ -355,6 +440,14 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.md,
     letterSpacing: 1,
   },
+  sectionHeadingRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  manageTasks: {
+    textDecorationLine: "underline",
+  },
   statsRow: {
     flexDirection: "row",
     gap: Spacing.md,
@@ -417,6 +510,52 @@ const styles = StyleSheet.create({
   reviewStatuses: {
     gap: Spacing.xs,
     marginBottom: Spacing.md,
+  },
+  dailyTaskList: {
+    gap: Spacing.sm,
+  },
+  dailyTaskRow: {
+    ...hardShadow,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.md,
+    minHeight: 60,
+    padding: Spacing.md,
+    borderWidth: borderWidths.default,
+    borderColor: colors.border,
+    borderRadius: radius.md,
+    backgroundColor: colors.surface,
+  },
+  dailyTaskCheckbox: {
+    width: 26,
+    height: 26,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: borderWidths.default,
+    borderColor: colors.border,
+    borderRadius: radius.sm,
+  },
+  dailyTaskChecked: {
+    backgroundColor: colors.electricGreen,
+  },
+  checkmark: {
+    color: colors.text,
+    fontFamily: typography.label.fontFamily,
+    fontSize: 10,
+    fontWeight: typography.label.fontWeight,
+  },
+  completedTask: {
+    textDecorationLine: "line-through",
+    color: colors.mutedText,
+  },
+  emptyTasks: {
+    minHeight: 60,
+    justifyContent: "center",
+    padding: Spacing.md,
+    borderWidth: borderWidths.default,
+    borderColor: colors.border,
+    borderRadius: radius.md,
+    backgroundColor: colors.surface,
   },
   floatingActions: {
     position: "absolute",
