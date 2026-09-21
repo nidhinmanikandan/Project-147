@@ -560,7 +560,9 @@ const styles = StyleSheet.create({
   floatingActions: {
     position: "absolute",
     right: Spacing.lg,
-    bottom: Spacing.lg,
+    bottom: 84,
+    zIndex: 1000,
+    elevation: 10,
     alignItems: "flex-end",
     gap: Spacing.sm,
   },

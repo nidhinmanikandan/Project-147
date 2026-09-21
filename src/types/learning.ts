@@ -7,10 +7,17 @@ export interface LearningReview {
   completedAt: string | null;
 }
 
+export interface SubTopic {
+  id: string;
+  title: string;
+}
+
 export interface LearningItem {
   id: string;
   topic: string;
   category: string;
   learnedAt: string;
   reviews: LearningReview[];
+  subTopics?: SubTopic[];
 }
+

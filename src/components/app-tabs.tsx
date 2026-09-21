@@ -10,30 +10,34 @@ export default function AppTabs() {
   return (
     <NativeTabs
       backgroundColor={colors.background}
-      indicatorColor={colors.backgroundElement}
-      labelStyle={{ selected: { color: colors.text } }}
+      iconColor={{ default: colors.textSecondary, selected: colors.text }}
+      labelStyle={{
+        default: { color: colors.textSecondary },
+        selected: { color: colors.text },
+      }}
+      disableIndicator
     >
       <NativeTabs.Trigger name="index">
         <NativeTabs.Trigger.Label>Home</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon
-          src={require("@/assets/images/tabIcons/home.png")}
-          renderingMode="template"
+          sf={{ default: "house", selected: "house.fill" }}
+          md={{ default: "home", selected: "home" }}
         />
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger name="explore">
         <NativeTabs.Trigger.Label>Explore</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon
-          src={require("@/assets/images/tabIcons/explore.png")}
-          renderingMode="template"
+          sf={{ default: "square.grid.2x2", selected: "square.grid.2x2.fill" }}
+          md={{ default: "explore", selected: "explore" }}
         />
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger name="daily-tasks">
         <NativeTabs.Trigger.Label>Daily Tasks</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon
-          src={require("@/assets/images/tabIcons/home.png")}
-          renderingMode="template"
+          sf={{ default: "checklist", selected: "checklist" }}
+          md={{ default: "checklist", selected: "checklist" }}
         />
       </NativeTabs.Trigger>
     </NativeTabs>
