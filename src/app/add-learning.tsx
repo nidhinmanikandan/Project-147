@@ -84,6 +84,12 @@ export default function AddLearningScreen() {
     ]);
   }
 
+  const sortedLearningItems = [...learningItems].sort(
+    (first, second) =>
+      new Date(second.learnedAt).getTime() -
+      new Date(first.learnedAt).getTime(),
+  );
+
   return (
     <ScrollView
       contentContainerStyle={styles.content}
@@ -101,28 +107,34 @@ export default function AddLearningScreen() {
 
         <View style={styles.recentSection}>
           <SectionTitle>Recent learning</SectionTitle>
-          {learningItems.length > 0 ? (
-            [...learningItems]
-              .sort(
-                (first, second) =>
-                  new Date(second.learnedAt).getTime() -
-                  new Date(first.learnedAt).getTime(),
-              )
-              .map((item) => (
-                <View key={item.id} style={styles.recentItem}>
-                  <View style={styles.recentDetails}>
-                    <BodyText>{item.topic}</BodyText>
-                    <MutedText>
-                      {item.category} - {formatLearnedAt(item.learnedAt)}
-                    </MutedText>
-                  </View>
+          {sortedLearningItems.length > 0 ? (
+            sortedLearningItems.map((item) => (
+              <View key={item.id} style={styles.recentItem}>
+                <View style={styles.recentDetails}>
+                  <BodyText>{item.topic}</BodyText>
+                  <MutedText>
+                    {item.category} - {formatLearnedAt(item.learnedAt)}
+                  </MutedText>
+                </View>
+                <View style={styles.actionButtons}>
+                  <IconButton
+                    accessibilityLabel={`Edit ${item.topic}`}
+                    icon={{ ios: "pencil", android: "edit", web: "edit" }}
+                    onPress={() =>
+                      router.push({
+                        pathname: "/edit-learning/[id]",
+                        params: { id: item.id },
+                      })
+                    }
+                  />
                   <IconButton
                     accessibilityLabel={`Delete ${item.topic}`}
                     icon={{ ios: "minus", android: "remove", web: "remove" }}
                     onPress={() => confirmDelete(item.id)}
                   />
                 </View>
-              ))
+              </View>
+            ))
           ) : (
             <MutedText>No learning added yet.</MutedText>
           )}
@@ -171,6 +183,11 @@ const styles = StyleSheet.create({
   },
   recentDetails: {
     flex: 1,
+    gap: Spacing.xs,
+  },
+  actionButtons: {
+    flexDirection: "row",
+    alignItems: "center",
     gap: Spacing.xs,
   },
 });

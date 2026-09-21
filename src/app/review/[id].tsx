@@ -152,6 +152,19 @@ export default function ReviewScreen() {
                 ? formatDate(currentReview.scheduledFor)
                 : "Review cycle complete."}
             </MutedText>
+
+            {item.subTopics && item.subTopics.length > 0 ? (
+              <>
+                <SectionTitle style={styles.timelineTitle}>
+                  SUB-TOPICS & NOTES
+                </SectionTitle>
+                <View style={styles.timeline}>
+                  {item.subTopics.map((st) => (
+                    <BodyText key={st.id}>• {st.title}</BodyText>
+                  ))}
+                </View>
+              </>
+            ) : null}
           </>
         ) : (
           <MutedText>Learning item not found.</MutedText>

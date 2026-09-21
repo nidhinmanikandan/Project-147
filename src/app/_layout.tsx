@@ -32,6 +32,7 @@ export default function TabLayout() {
         <Stack.Screen name="onboarding" />
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="add-learning" />
+        <Stack.Screen name="edit-learning/[id]" />
       </Stack>
     </ThemeProvider>
   );
