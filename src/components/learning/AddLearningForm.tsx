@@ -121,6 +121,8 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
     borderRadius: radius.md,
     backgroundColor: colors.yellow,
+    zIndex: 100,
+    elevation: 5,
   },
   pressedButton: {
     opacity: 0.72,
